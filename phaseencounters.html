@@ -19,35 +19,35 @@
             font-family: 'SmallPixel', cursive;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Entfernt Scrollbalken */
+            overflow: hidden; 
         }
 
         .phase-encounters-table {
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 400px; /* Breite der Tabelle */
+            width: 400px; 
             color: white;
-            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
-            padding: 10px; /* Abstand innerhalb der Tabelle */
-            border-radius: 10px; /* Abgerundete Ecken */
+            background-color: rgba(0, 0, 0, 0.8); 
+            padding: 10px; 
+            border-radius: 10px; 
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: none; /* Entfernt Hintergrund */
+            background: none;
         }
 
         th, td {
-            padding: 5px; /* Verkleinerter Abstand */
-            text-align: center; /* Text zentrieren */
-            vertical-align: middle; /* Vertikales Zentrieren */
-            background: none; /* Entfernt Hintergrund */
-            border: none; /* Rahmen unsichtbar machen */
+            padding: 5px; 
+            text-align: center; 
+            vertical-align: middle; 
+            background: none; 
+            border: none; 
             color: white;
             font-size: 18px;
-            height: 20px; /* Verkleinerte Höhe */
+            height: 20px;
         }
 
         th {
@@ -71,7 +71,7 @@
 
                 const totalPhaseEncounters = data.totals.phase_encounters;
 
-                // Update der Tabelle
+                // Update the table
                 const phaseEncountersTable = document.getElementById('phase-encounters-table-body');
                 phaseEncountersTable.innerHTML = '';
 
