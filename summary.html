@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Data Summary</title>
+    <style>
+        @font-face {
+            font-family: 'SmallPixel';
+            src: url('/fonts/small_pixel.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background: none;
+            font-family: 'SmallPixel', cursive;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Entfernt Scrollbalken */
+        }
+
+        .badge-container {
+            position: absolute;
+            bottom: 250px; /* Platz für die Tabelle darunter plus 100px nach oben verschoben */
+            right: 20px; /* Abstand vom rechten Rand */
+            display: flex;
+            gap: 5px;
+        }
+
+        .badge-wrapper {
+            filter: grayscale(100%); /* Standardmäßig ausgegraut */
+            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .badge-wrapper.active {
+            filter: none; /* Entfernt Graustufenfilter, wenn aktiv */
+        }
+
+        .badge {
+            width: 25px; /* Größe der Abzeichen */
+            height: 25px; /* Größe der Abzeichen */
+        }
+
+        .data-table {
+            position: absolute;
+            top: 37.5px; /* 25% größer */
+            left: 17.5px; /* 25% größer und 10px nach links verschoben */
+            width: 720px; /* 25% größer */
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
+            padding: 10.94px; /* 25% größer */
+            border-radius: 10.94px; /* 25% größer */
+            margin-bottom: 31.25px; /* 25% größer */
+            margin-right: 6.25px; /* 25% größer */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: none; /* Entfernt Hintergrund */
+        }
+
+        th, td {
+            padding: 3px; /* Verkleinerter Abstand */
+            text-align: center; /* Text zentrieren */
+            vertical-align: middle; /* Vertikales Zentrieren */
+            background: none; /* Entfernt Hintergrund */
+            border: none; /* Rahmen unsichtbar machen */
+            color: white;
+            font-size: 20px; /* 25% größer */
+            height: 15px; /* Verkleinerte Höhe */
+        }
+
+        th {
+            color: white;
+            font-size: 20.88px; /* 25% größer */
+        }
+
+        .sprite {
+            width: 80.75px; /* 25% größer */
+            height: 80.75px; /* 25% größer */
+            margin: -18.75px 0; /* 25% größer */
+        }
+
+        .pin {
+            width: 37.5px; /* 25% größer */
+            height: auto;
+        }
+
+        .row-border td {
+            border-bottom: 1px solid white;
+        }
+
+        .row-border:last-child td {
+            border-bottom: none;
+        }
+
+        .high-sv { color: #fd6868; }
+        .low-sv { color: lightgreen; }
+
+        .summary-table {
+            position: absolute;
+            bottom: 20px; /* Abstand vom unteren Rand */
+            right: 20px; /* Abstand vom rechten Rand */
+            width: 300px; /* Anpassen basierend auf dem Bild */
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
+            padding: 10px; /* Abstand innerhalb der Tabelle */
+            border-radius: 10px; /* Abgerundete Ecken */
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px; /* Abstand nach unten zwischen den Einträgen */
+        }
+
+        .summary-item .title {
+            text-align: left;
+            flex: 1;
+        }
+
+        .summary-item .value {
+            text-align: right;
+            flex: 1;
+            font-size: 18px; /* Größere Schriftgröße für die Werte */
+            position: relative; /* Ermöglicht das absolute Positionieren der Sprites */
+        }
+
+        .icon {
+            font-size: 36px; /* Vergrößerte Größe des Emotes */
+            line-height: 1; /* Zeilenhöhe, um das Emote vertikal zu zentrieren */
+            margin-right: 5px; /* Abstand zum Text */
+            vertical-align: middle; /* Vertikales Zentrieren des Emotes */
+        }
+
+        .title-text {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .title-text span {
+            display: block;
+            line-height: 1.2; /* Zeilenhöhe, um die Texte untereinander zu setzen */
+        }
+
+        .pokemon-img {
+            width: 60px; /* Bildgröße verdoppelt */
+            height: 60px; /* Bildgröße verdoppelt */
+            position: absolute; /* Absolut positionieren */
+            left: 70px; /* 70px nach links verschieben */
+            top: 50%;
+            transform: translateY(-50%); /* Vertikal zentrieren */
+        }
+
+        .green {
+            color: lightgreen; /* Farbe für Highest IV */
+        }
+
+        .red {
+            color: red; /* Farbe für Lowest IV */
+        }
+    </style>
+</head>
+<body>
+    <div class="data-table">
+        <table>
+            <thead>
+                <tr>
+                    <th><img src="/pokebot-20240528.0/sprites/pin.png" alt="Pin" class="pin"></th>
+                    <th></th>
+                    <th>Phase<br>Encounters</th>
+                    <th>Total<br>Encounters</th>
+                    <th>✨ Shinys ✨</th>
+                    <th>SV Values</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body"></tbody>
+        </table>
+    </div>
+
+    <div class="summary-table">
+        <div class="summary-item title-text">
+            <span class="icon">✨</span>
+            <span>
+                <span>Total</span>
+                <span>Shinys</span>
+            </span>
+            <span class="value" id="total-shinys">0</span>
+        </div>
+        <div class="summary-item title-text">
+            <span class="icon">📈</span>
+            <span>
+                <span>Total</span>
+                <span>Encounters</span>
+            </span>
+            <span class="value" id="total-encounters">0</span>
+        </div>
+        <div class="summary-item title-text">
+            <span class="icon">⭐</span>
+            <span>
+                <span>Highest</span>
+                <span>IV</span>
+            </span>
+            <span class="value green">
+                <img src="" class="pokemon-img" id="highest-iv-img" />
+                <span id="highest-iv">0</span>
+            </span>
+        </div>
+        <div class="summary-item title-text">
+            <span class="icon">🌧️</span>
+            <span>
+                <span>Lowest</span>
+                <span>IV</span>
+            </span>
+            <span class="value red">
+                <img src="" class="pokemon-img" id="lowest-iv-img" />
+                <span id="lowest-iv">0</span>
+            </span>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('/pokebot-20240528.0/profiles/Felix/stats/totals.json');
+            const data = await response.json();
+
+            const totals = data.totals;
+            const pokemonData = data.pokemon;
+
+            let totalShinys = 0;
+            for (const pokemon in pokemonData) {
+                if (pokemonData.hasOwnProperty(pokemon)) {
+                    totalShinys += pokemonData[pokemon].shiny_encounters || 0;
+                }
+            }
+
+            document.getElementById('total-shinys').textContent = totalShinys;
+            document.getElementById('total-encounters').textContent = totals.encounters;
+
+            // Höchste IV
+            const highestIVPokemonName = totals.highest_iv_sum_pokemon;
+            const highestIV = totals.highest_iv_sum;
+            document.getElementById('highest-iv-img').src = `/pokebot-20240528.0/sprites/pokemon/normal/${highestIVPokemonName}.png`;
+            document.getElementById('highest-iv').textContent = highestIV;
+
+            // Niedrigste IV
+            const lowestIVPokemonName = totals.lowest_iv_sum_pokemon;
+            const lowestIV = totals.lowest_iv_sum;
+            document.getElementById('lowest-iv-img').src = `/pokebot-20240528.0/sprites/pokemon/normal/${lowestIVPokemonName}.png`;
+            document.getElementById('lowest-iv').textContent = lowestIV;
+
+            // Beispiel zum Aktivieren der Badges
+            const badges = [
+                { id: 'stone-badge-wrapper', active: false },
+                { id: 'knuckle-badge-wrapper', active: false },
+                { id: 'dynamo-badge-wrapper', active: false },
+                { id: 'heat-badge-wrapper', active: false },
+                { id: 'balance-badge-wrapper', active: false },
+                { id: 'feather-badge-wrapper', active: false },
+                { id: 'mind-badge-wrapper', active: false },
+                { id: 'rain-badge-wrapper', active: false }
+            ];
+
+            badges.forEach(badge => {
+                document.getElementById(badge.id).classList.toggle('active', badge.active);
+            });
+
+            // Data rows
+            const pokemons = [
+                { name: 'Lotad', chance: '20%', needed: 2 },
+                { name: 'Poochyena', chance: '30%', needed: 2 },
+                { name: 'Ralts', chance: '4%', needed: 3 },
+                { name: 'Seedot', chance: '1%', needed: 2 },
+                { name: 'Wurmple', chance: '30%', needed: 5 },
+                { name: 'Zigzagoon', chance: '15%', needed: 2 },
+                { name: 'Mudkip', chance: '0%', needed: 1 },
+                { name: 'Wingull', chance: '0%', needed: 2 },
+                { name: 'Marill', chance: '0%', needed: 2 },
+                { name: 'Taillow', chance: '0%', needed: 2 },
+                { name: 'Shroomish', chance: '0%', needed: 2 },
+                { name: 'Slakoth', chance: '0%', needed: 3 },
+                { name: 'Skitty', chance: '0%', needed: 1 },
+                { name: 'Abra', chance: '0%', needed: 2 },
+                { name: 'Whismur', chance: '0%', needed: 3 },
+                { name: 'Nincada', chance: '0%', needed: 2 },
+            ];
+
+            const table = document.getElementById('data-table-body');
+            table.innerHTML = '';
+
+            pokemons.forEach(pokemon => {
+                const row = document.createElement('tr');
+                row.classList.add('row-border');
+
+                // Pokémon-Sprite
+                const spriteCell = document.createElement('td');
+                const spriteImg = document.createElement('img');
+                spriteImg.src = `/pokebot-20240528.0/sprites/pokemon/shiny/${pokemon.name}.png`;
+                spriteImg.alt = pokemon.name;
+                spriteImg.classList.add('sprite');
+                spriteCell.appendChild(spriteImg);
+                row.appendChild(spriteCell);
+
+                // Prozentchance
+                const chanceCell = document.createElement('td');
+                chanceCell.classList.add('chance');
+                chanceCell.textContent = pokemon.chance;
+                row.appendChild(chanceCell);
+
+                // Phase Encounters
+                const phaseEncountersCell = document.createElement('td');
+                phaseEncountersCell.textContent = pokemonData[pokemon.name] ? pokemonData[pokemon.name].phase_encounters || 0 : 0;
+                row.appendChild(phaseEncountersCell);
+
+                // Total Encounters
+                const totalEncountersCell = document.createElement('td');
+                totalEncountersCell.textContent = pokemonData[pokemon.name] ? pokemonData[pokemon.name].encounters || 0 : 0;
+                row.appendChild(totalEncountersCell);
+
+                // Shiny Encounters
+                const shinyEncountersCell = document.createElement('td');
+                shinyEncountersCell.textContent = pokemonData[pokemon.name] ? `${pokemonData[pokemon.name].shiny_encounters || 0}/${pokemon.needed}` : `0/${pokemon.needed}`;
+                row.appendChild(shinyEncountersCell);
+
+                // SV Values
+                const svCell = document.createElement('td');
+                const highSV = pokemonData[pokemon.name]?.phase_highest_sv ?? 'N/A';
+                const lowSV = pokemonData[pokemon.name]?.phase_lowest_sv ?? 'N/A';
+                svCell.innerHTML = `<span class="high-sv">${highSV}</span> / <span class="low-sv">${lowSV}</span>`;
+                row.appendChild(svCell);
+
+                table.appendChild(row);
+            });
+        }
+
+        function updateData() {
+            fetchData();
+            setTimeout(updateData, 1000);
+        }
+
+        window.onload = updateData;
+    </script>
+</body>
+</html>
+

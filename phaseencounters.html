@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase Encounters</title>
+    <style>
+        @font-face {
+            font-family: 'SmallPixel';
+            src: url('/fonts/small_pixel.woff2') format('woff2'),
+                 url('/fonts/small_pixel.woff') format('woff'),
+                 url('/fonts/small_pixel.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background: none;
+            font-family: 'SmallPixel', cursive;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Entfernt Scrollbalken */
+        }
+
+        .phase-encounters-table {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 400px; /* Breite der Tabelle */
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
+            padding: 10px; /* Abstand innerhalb der Tabelle */
+            border-radius: 10px; /* Abgerundete Ecken */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: none; /* Entfernt Hintergrund */
+        }
+
+        th, td {
+            padding: 5px; /* Verkleinerter Abstand */
+            text-align: center; /* Text zentrieren */
+            vertical-align: middle; /* Vertikales Zentrieren */
+            background: none; /* Entfernt Hintergrund */
+            border: none; /* Rahmen unsichtbar machen */
+            color: white;
+            font-size: 18px;
+            height: 20px; /* Verkleinerte Höhe */
+        }
+
+        th {
+            color: white;
+            font-size: 20px;
+        }
+
+        .row-border td {
+            border-bottom: 1px solid white;
+        }
+
+        .row-border:last-child td {
+            border-bottom: none;
+        }
+    </style>
+    <script>
+        async function fetchPhaseEncounters() {
+            try {
+                const response = await fetch('/pokebot-20240528.0/profiles/Felix/stats/totals.json');
+                const data = await response.json();
+
+                const totalPhaseEncounters = data.totals.phase_encounters;
+
+                // Update der Tabelle
+                const phaseEncountersTable = document.getElementById('phase-encounters-table-body');
+                phaseEncountersTable.innerHTML = '';
+
+                const row = document.createElement('tr');
+                row.classList.add('row-border');
+
+                // Phase Encounters
+                const encountersCell = document.createElement('td');
+                encountersCell.textContent = totalPhaseEncounters;
+                row.appendChild(encountersCell);
+
+                phaseEncountersTable.appendChild(row);
+            } catch (error) {
+                console.error('Error fetching phase encounters:', error);
+            }
+        }
+
+        function updateData() {
+            fetchPhaseEncounters();
+            setTimeout(updateData, 1000);
+        }
+
+        window.onload = updateData;
+    </script>
+</head>
+<body>
+    <div class="phase-encounters-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Phase Encounters</th>
+                </tr>
+            </thead>
+            <tbody id="phase-encounters-table-body"></tbody>
+        </table>
+    </div>
+</body>
+</html>

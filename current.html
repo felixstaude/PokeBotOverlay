@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Pokémon</title>
+    <style>
+        @font-face {
+            font-family: 'SmallPixel';
+            src: url('/fonts/small_pixel.woff2') format('woff2'),
+                 url('/fonts/small_pixel.woff') format('woff'),
+                 url('/fonts/small_pixel.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background: none;
+            font-family: 'SmallPixel', cursive;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Entfernt Scrollbalken */
+        }
+
+        .current-pokemon-table {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 450px; /* Verkleinert um 25% */
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 7.5px; /* Verkleinert um 25% */
+            border-radius: 7.5px; /* Verkleinert um 25% */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: none; /* Entfernt Hintergrund */
+        }
+
+        th, td {
+            padding: 3.75px; /* Verkleinert um 25% */
+            text-align: center; /* Text zentrieren */
+            vertical-align: middle; /* Vertikales Zentrieren */
+            background: none; /* Entfernt Hintergrund */
+            border: none; /* Rahmen unsichtbar machen */
+            color: white;
+            font-size: 25px; /* Verkleinert um 25% */
+            height: 15px; /* Verkleinert um 25% */
+        }
+
+        th {
+            color: white;
+            font-size: 20px; /* Verkleinert um 25% */
+        }
+
+        .sprite {
+            width: 60px; /* Originalgröße */
+            height: 60px; /* Originalgröße */
+            margin: -7.5px 0; /* Verkleinert um 25% */
+            transform: scale(1.5); /* Vergrößert um 50% */
+            transform-origin: center; /* Skalierung von der Mitte aus */
+        }
+
+        .row-border td {
+            border-bottom: 1px solid white;
+        }
+
+        .row-border:last-child td {
+            border-bottom: none;
+        }
+
+        .high-sv { color: #fd6868; }
+        .low-sv { color: lightgreen; }
+    </style>
+    <script>
+        async function fetchLatestPhaseCSV() {
+            try {
+                // Fetch list of files in the directory
+                const response = await fetch('/pokebot-20240528.0/profiles/Felix/stats/encounters/');
+                const text = await response.text();
+
+                // Get all phase files and determine the highest phase number
+                const phaseFiles = text.match(/Phase (\d+) Encounters\.csv/g);
+                if (!phaseFiles) throw new Error('No phase files found');
+
+                const latestPhaseNumber = phaseFiles
+                    .map(file => parseInt(file.match(/Phase (\d+)/)[1]))
+                    .reduce((max, num) => Math.max(max, num), -1);
+
+                const latestPhaseFile = `Phase ${latestPhaseNumber} Encounters.csv`;
+                return latestPhaseFile;
+            } catch (error) {
+                console.error('Error fetching phase files:', error);
+            }
+        }
+
+        async function fetchCurrentPokemon() {
+            try {
+                const latestPhaseFile = await fetchLatestPhaseCSV();
+                if (!latestPhaseFile) return;
+
+                const response = await fetch(`/pokebot-20240528.0/profiles/Felix/stats/encounters/${latestPhaseFile}`);
+                const csvText = await response.text();
+
+                // Parse CSV data
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                const headers = rows[0].split(',');
+                const lastRow = rows[rows.length - 1].split(',');
+
+                // Create Pokémon object
+                const pokemon = headers.reduce((obj, header, index) => {
+                    obj[header.trim()] = lastRow[index].trim();
+                    return obj;
+                }, {});
+
+                // Update table
+                const currentPokemonTable = document.getElementById('current-pokemon-table-body');
+                currentPokemonTable.innerHTML = '';
+
+                const currentRow = document.createElement('tr');
+                currentRow.classList.add('row-border');
+
+                // Sprite
+                const spriteCell = document.createElement('td');
+                const spriteImg = document.createElement('img');
+                const spritePath = pokemon.shinyValue <= 7 ? 'shiny' : 'normal';
+                spriteImg.src = `/pokebot-20240528.0/sprites/pokemon/${spritePath}/${pokemon.name}.png`;
+                spriteImg.alt = pokemon.Pokemon;
+                spriteImg.classList.add('sprite');
+                spriteCell.appendChild(spriteImg);
+                currentRow.appendChild(spriteCell);
+
+                // IVs
+                const stats = ['IVs_hp', 'IVs_attack', 'IVs_defense', 'IVs_spAttack', 'IVs_spDefense', 'IVs_speed'];
+                stats.forEach(stat => {
+                    const cell = document.createElement('td');
+                    cell.textContent = pokemon[stat];
+                    currentRow.appendChild(cell);
+                });
+
+                // SV
+                const svCell = document.createElement('td');
+                svCell.textContent = pokemon.shinyValue;
+                svCell.classList.add(pokemon.shinyValue <= 7 ? 'low-sv' : 'high-sv');
+                currentRow.appendChild(svCell);
+
+                currentPokemonTable.appendChild(currentRow);
+            } catch (error) {
+                console.error('Error fetching current Pokémon:', error);
+            }
+        }
+
+        function updateData() {
+            fetchCurrentPokemon();
+            setTimeout(updateData, 1000);
+        }
+
+        window.onload = updateData;
+    </script>
+</head>
+<body>
+    <div class="current-pokemon-table">
+        <table>
+            <thead>
+                <tr>
+                    <th> </th>
+                    <th>HP</th>
+                    <th>ATK</th>
+                    <th>DEF</th>
+                    <th>SPA</th>
+                    <th>SPD</th>
+                    <th>SPE</th>
+                    <th>SV</th>
+                </tr>
+            </thead>
+            <tbody id="current-pokemon-table-body"></tbody>
+        </table>
+    </div>
+</body>
+</html>

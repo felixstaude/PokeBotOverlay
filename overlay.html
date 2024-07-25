@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Data Overlay</title>
+    <style>
+        @font-face {
+            font-family: 'SmallPixel';
+            src: url('/fonts/Piksel-JAGa.ttf') format('truetype'),
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background: none;
+            font-family: 'SmallPixel', cursive;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Entfernt Scrollbalken */
+        }
+
+        .data-table {
+            position: absolute;
+            top: 37.5px; /* 25% größer */
+            left: 27.5px; /* 25% größer und 10px nach links verschoben */
+            width: 720px; /* 25% größer */
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
+            padding: 10.94px; /* 25% größer */
+            border-radius: 10.94px; /* 25% größer */
+            margin-bottom: 31.25px; /* 25% größer */
+            margin-right: 6.25px; /* 25% größer */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: none; /* Entfernt Hintergrund */
+        }
+
+        th, td {
+            padding: 3px; /* Verkleinerter Abstand */
+            text-align: center; /* Text zentrieren */
+            vertical-align: middle; /* Vertikales Zentrieren */
+            background: none; /* Entfernt Hintergrund */
+            border: none; /* Rahmen unsichtbar machen */
+            color: white;
+            font-family: 'SmallPixel', cursive; /* Verwenden der benutzerdefinierten Schriftart */
+            font-size: 20px; /* 25% größer */
+            height: 15px; /* Verkleinerte Höhe */
+        }
+
+        th {
+            color: white;
+            font-family: 'SmallPixel', cursive; /* Verwenden der benutzerdefinierten Schriftart */
+            font-size: 20.88px; /* 25% größer */
+        }
+
+        .sprite {
+            width: 80.75px; /* 25% größer */
+            height: 80.75px; /* 25% größer */
+            margin: -18.75px 0; /* 25% größer */
+        }
+
+        .pin {
+            width: 37.5px; /* 25% größer */
+            height: auto;
+        }
+
+        .row-border td {
+            border-bottom: 1px solid white;
+        }
+
+        .row-border:last-child td {
+            border-bottom: none;
+        }
+
+        .high-sv { color: #fd6868; }
+        .low-sv { color: lightgreen; }
+    </style>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/pokebot-20240528.0/profiles/Felix/stats/totals.json');
+            const data = await response.json();
+
+            const totals = data.pokemon;
+
+            const pokemons = [
+                { name: 'Lotad', chance: '20%', needed: 2 },
+                { name: 'Poochyena', chance: '30%', needed: 2 },
+                { name: 'Ralts', chance: '4%', needed: 3 },
+                { name: 'Seedot', chance: '1%', needed: 2 },
+                { name: 'Wurmple', chance: '30%', needed: 5 },
+                { name: 'Zigzagoon', chance: '15%', needed: 2 },
+                { name: 'Mudkip', chance: '0%', needed: 1 },
+                { name: 'Wingull', chance: '0%', needed: 2 },
+                { name: 'Marill', chance: '0%', needed: 2 },
+                { name: 'Taillow', chance: '0%', needed: 2 },
+                { name: 'Shroomish', chance: '0%', needed: 2 },
+                { name: 'Slakoth', chance: '0%', needed: 3 },
+                { name: 'Skitty', chance: '0%', needed: 1 },
+                { name: 'Abra', chance: '0%', needed: 2 },
+                { name: 'Whismur', chance: '0%', needed: 3 },
+                { name: 'Nincada', chance: '0%', needed: 2 },
+            ];
+
+            const table = document.getElementById('data-table-body');
+            table.innerHTML = '';
+
+            // Data rows
+            pokemons.forEach(pokemon => {
+                const row = document.createElement('tr');
+                row.classList.add('row-border');
+
+                // Pokémon-Sprite
+                const spriteCell = document.createElement('td');
+                const spriteImg = document.createElement('img');
+                spriteImg.src = `/pokebot-20240528.0/sprites/pokemon/shiny/${pokemon.name}.png`;
+                spriteImg.alt = pokemon.name;
+                spriteImg.classList.add('sprite');
+                spriteCell.appendChild(spriteImg);
+                row.appendChild(spriteCell);
+
+                // Prozentchance
+                const chanceCell = document.createElement('td');
+                chanceCell.classList.add('chance');
+                chanceCell.textContent = pokemon.chance;
+                row.appendChild(chanceCell);
+
+                // Phase Encounters
+                const phaseEncountersCell = document.createElement('td');
+                phaseEncountersCell.textContent = totals[pokemon.name] ? totals[pokemon.name].phase_encounters || 0 : 0;
+                row.appendChild(phaseEncountersCell);
+
+                // Total Encounters
+                const totalEncountersCell = document.createElement('td');
+                totalEncountersCell.textContent = totals[pokemon.name] ? totals[pokemon.name].encounters || 0 : 0;
+                row.appendChild(totalEncountersCell);
+
+                // Shiny Encounters
+                const shinyEncountersCell = document.createElement('td');
+                shinyEncountersCell.textContent = totals[pokemon.name] ? `${totals[pokemon.name].shiny_encounters || 0}/${pokemon.needed}` : `0/${pokemon.needed}`;
+                row.appendChild(shinyEncountersCell);
+
+                // SV Values
+                const svCell = document.createElement('td');
+                const highSV = totals[pokemon.name]?.phase_highest_sv ?? 'N/A';
+                const lowSV = totals[pokemon.name]?.phase_lowest_sv ?? 'N/A';
+                svCell.innerHTML = `<span class="high-sv">${highSV}</span> / <span class="low-sv">${lowSV}</span>`;
+                row.appendChild(svCell);
+
+                table.appendChild(row);
+            });
+        }
+
+        function updateData() {
+            fetchData();
+            setTimeout(updateData, 1000);
+        }
+
+        window.onload = updateData;
+    </script>
+</head>
+<body>
+    <div class="data-table">
+        <table>
+            <thead>
+                <tr>
+                    <th><img src="/pokebot-20240528.0/sprites/pin.png" alt="Pin" class="pin"></th>
+                    <th></th>
+                    <th>Phase<br>Encounters</th>
+                    <th>Total<br>Encounters</th>
+                    <th>✨ Shinys ✨</th>
+                    <th>SV Values</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body"></tbody>
+        </table>
+    </div>
+</body>
+</html>
