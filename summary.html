@@ -17,76 +17,76 @@
             font-family: 'SmallPixel', cursive;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Entfernt Scrollbalken */
+            overflow: hidden;
         }
 
         .badge-container {
             position: absolute;
-            bottom: 250px; /* Platz für die Tabelle darunter plus 100px nach oben verschoben */
-            right: 20px; /* Abstand vom rechten Rand */
+            bottom: 250px; 
+            right: 20px; 
             display: flex;
             gap: 5px;
         }
 
         .badge-wrapper {
-            filter: grayscale(100%); /* Standardmäßig ausgegraut */
-            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
+            filter: grayscale(100%); 
+            background-color: rgba(0, 0, 0, 0.8); 
             padding: 5px;
             border-radius: 5px;
         }
 
         .badge-wrapper.active {
-            filter: none; /* Entfernt Graustufenfilter, wenn aktiv */
+            filter: none;
         }
 
         .badge {
-            width: 25px; /* Größe der Abzeichen */
-            height: 25px; /* Größe der Abzeichen */
+            width: 25px; 
+            height: 25px;
         }
 
         .data-table {
             position: absolute;
-            top: 37.5px; /* 25% größer */
-            left: 17.5px; /* 25% größer und 10px nach links verschoben */
-            width: 720px; /* 25% größer */
+            top: 37.5px;
+            left: 17.5px; 
+            width: 720px; 
             color: white;
-            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
-            padding: 10.94px; /* 25% größer */
-            border-radius: 10.94px; /* 25% größer */
-            margin-bottom: 31.25px; /* 25% größer */
-            margin-right: 6.25px; /* 25% größer */
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10.94px; 
+            border-radius: 10.94px; 
+            margin-bottom: 31.25px; 
+            margin-right: 6.25px; 
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: none; /* Entfernt Hintergrund */
+            background: none;
         }
 
         th, td {
-            padding: 3px; /* Verkleinerter Abstand */
-            text-align: center; /* Text zentrieren */
-            vertical-align: middle; /* Vertikales Zentrieren */
-            background: none; /* Entfernt Hintergrund */
-            border: none; /* Rahmen unsichtbar machen */
+            padding: 3px; 
+            text-align: center; 
+            vertical-align: middle; 
+            background: none;
+            border: none; 
             color: white;
-            font-size: 20px; /* 25% größer */
-            height: 15px; /* Verkleinerte Höhe */
+            font-size: 20px; 
+            height: 15px;
         }
 
         th {
             color: white;
-            font-size: 20.88px; /* 25% größer */
+            font-size: 20.88px; 
         }
 
         .sprite {
-            width: 80.75px; /* 25% größer */
-            height: 80.75px; /* 25% größer */
-            margin: -18.75px 0; /* 25% größer */
+            width: 80.75px;
+            height: 80.75px; 
+            margin: -18.75px 0; 
         }
 
         .pin {
-            width: 37.5px; /* 25% größer */
+            width: 37.5px; 
             height: auto;
         }
 
@@ -103,20 +103,20 @@
 
         .summary-table {
             position: absolute;
-            bottom: 20px; /* Abstand vom unteren Rand */
-            right: 20px; /* Abstand vom rechten Rand */
-            width: 300px; /* Anpassen basierend auf dem Bild */
+            bottom: 20px;
+            right: 20px; 
+            width: 300px; 
             color: white;
-            background-color: rgba(0, 0, 0, 0.8); /* Leicht grauer, transparenter Hintergrund */
-            padding: 10px; /* Abstand innerhalb der Tabelle */
-            border-radius: 10px; /* Abgerundete Ecken */
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px; 
+            border-radius: 10px; 
         }
 
         .summary-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px; /* Abstand nach unten zwischen den Einträgen */
+            margin-bottom: 5px; 
         }
 
         .summary-item .title {
@@ -127,15 +127,15 @@
         .summary-item .value {
             text-align: right;
             flex: 1;
-            font-size: 18px; /* Größere Schriftgröße für die Werte */
-            position: relative; /* Ermöglicht das absolute Positionieren der Sprites */
+            font-size: 18px; 
+            position: relative; 
         }
 
         .icon {
-            font-size: 36px; /* Vergrößerte Größe des Emotes */
-            line-height: 1; /* Zeilenhöhe, um das Emote vertikal zu zentrieren */
-            margin-right: 5px; /* Abstand zum Text */
-            vertical-align: middle; /* Vertikales Zentrieren des Emotes */
+            font-size: 36px;
+            line-height: 1; 
+            margin-right: 5px; 
+            vertical-align: middle;
         }
 
         .title-text {
@@ -146,24 +146,24 @@
 
         .title-text span {
             display: block;
-            line-height: 1.2; /* Zeilenhöhe, um die Texte untereinander zu setzen */
+            line-height: 1.2;
         }
 
         .pokemon-img {
-            width: 60px; /* Bildgröße verdoppelt */
-            height: 60px; /* Bildgröße verdoppelt */
-            position: absolute; /* Absolut positionieren */
-            left: 70px; /* 70px nach links verschieben */
+            width: 60px; 
+            height: 60px; /
+            position: absolute;
+            left: 70px;
             top: 50%;
-            transform: translateY(-50%); /* Vertikal zentrieren */
+            transform: translateY(-50%); 
         }
 
         .green {
-            color: lightgreen; /* Farbe für Highest IV */
+            color: lightgreen;
         }
 
         .red {
-            color: red; /* Farbe für Lowest IV */
+            color: red;
         }
     </style>
 </head>
@@ -243,19 +243,19 @@
             document.getElementById('total-shinys').textContent = totalShinys;
             document.getElementById('total-encounters').textContent = totals.encounters;
 
-            // Höchste IV
+            // highest IV
             const highestIVPokemonName = totals.highest_iv_sum_pokemon;
             const highestIV = totals.highest_iv_sum;
             document.getElementById('highest-iv-img').src = `/pokebot-20240528.0/sprites/pokemon/normal/${highestIVPokemonName}.png`;
             document.getElementById('highest-iv').textContent = highestIV;
 
-            // Niedrigste IV
+            // lowest IV
             const lowestIVPokemonName = totals.lowest_iv_sum_pokemon;
             const lowestIV = totals.lowest_iv_sum;
             document.getElementById('lowest-iv-img').src = `/pokebot-20240528.0/sprites/pokemon/normal/${lowestIVPokemonName}.png`;
             document.getElementById('lowest-iv').textContent = lowestIV;
 
-            // Beispiel zum Aktivieren der Badges
+            // TODO: Badges not woking right now, idk why
             const badges = [
                 { id: 'stone-badge-wrapper', active: false },
                 { id: 'knuckle-badge-wrapper', active: false },
@@ -307,7 +307,7 @@
                 spriteCell.appendChild(spriteImg);
                 row.appendChild(spriteCell);
 
-                // Prozentchance
+                // percent chance
                 const chanceCell = document.createElement('td');
                 chanceCell.classList.add('chance');
                 chanceCell.textContent = pokemon.chance;
